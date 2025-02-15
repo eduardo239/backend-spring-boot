@@ -1,0 +1,4 @@
+package io.eduardo.app_store.repository;
+
+public interface ItemRepository {
+}

@@ -1,0 +1,41 @@
+package io.eduardo.app_store.controller;
+
+
+import io.eduardo.app_store.models.Item;
+import io.eduardo.app_store.repository.ItemRepository;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/items")
+@CrossOrigin(origins = "http://localhost:5173")
+public class ItemController {
+
+  private final ItemRepository itemRepository;
+
+  public ItemController(ItemRepository itemRepository) {
+    this.itemRepository = itemRepository;
+  }
+
+  @GetMapping
+  public List<Item> getAllItems() {
+    return itemRepository.findAll();
+  }
+
+  @GetMapping("/{id}")
+  public Item getItemById(@PathVariable Integer id) {
+    return itemRepository.findById(id).orElse(null);
+  }
+
+  @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
+  public Item saveItem(@Valid @RequestBody  Item user) {
+    return itemRepository.save(user);
+  }
+
+  @DeleteMapping("/{id}")
+  public void deleteItem(@PathVariable Integer id) {
+    itemRepository.deleteById(id);
+  }
+}
