@@ -48,6 +48,31 @@ public class OrderController {
 
 
   /**
+   * Creates a new order for a user with the given ID and adds the given products to it.
+   *
+   * @param userId   the ID of the user
+   * @param products the products to be added to the order
+   * @throws IllegalArgumentException if the user with the given ID does not exist
+   */
+  @PostMapping("/add-order-list-to-user/{userId}")
+  public Order addListOfProductsToUserOrder(@PathVariable Long userId, @RequestBody List<Product> products) {
+
+    Optional<User> _user = userRepository.findById(userId);
+    if (_user.isEmpty()) {
+      throw new IllegalArgumentException("[OrderController] User not found");
+    }
+
+    User user = _user.get();
+    Order order = new Order();
+    order.setUser(user);
+    order.addProducts(products);
+    orderRepository.save(order);
+
+    return order;
+  }
+
+
+  /**
    * Creates a new order and adds it to a user.
    *
    * @param userId the ID of the user
@@ -55,18 +80,18 @@ public class OrderController {
    * @throws IllegalArgumentException if the user with the given ID does not exist
    */
   @PostMapping("/add-order-to-user/{userId}")
-  public void addOrderToUser(@PathVariable Long userId, @RequestBody Order order) {
+  public User addOrderToUser(@PathVariable Long userId, @RequestBody Order order) {
 
     Optional<User> _user = userRepository.findById(userId);
-    System.out.println("[OrderController]" + _user);
     if (_user.isEmpty()) {
       throw new IllegalArgumentException("[OrderController] User not found");
     }
 
     User user = _user.get();
-
     user.addOrder(order);
     userRepository.save(user);
+
+    return user;
   }
 
   /**
@@ -102,6 +127,15 @@ public class OrderController {
   @DeleteMapping("/{id}")
   public void deleteOrder(@PathVariable Long id) {
     orderRepository.deleteById(id);
+  }
+
+  @DeleteMapping("/by-user-id/{userId}")
+  public void deleteOrdersByUserId(@PathVariable Long userId) {
+    Optional<User> user = userRepository.findById(userId);
+    if (user.isEmpty()) {
+      throw new IllegalArgumentException("[OrderController] User not found");
+    }
+    orderRepository.deleteByUserId(userId);
   }
 
 

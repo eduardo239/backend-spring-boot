@@ -46,6 +46,12 @@ public class Order {
     product.setOrder(this);
   }
 
+  public void addProducts(List<Product> products) {
+    products.forEach(this::addProduct);
+    this.products.forEach(product -> product.setOrder(this));
+
+  }
+
   /**
    * Removes a product from this order.
    *
@@ -54,6 +60,10 @@ public class Order {
   public void removeProduct(Product product) {
     products.remove(product);
     product.setOrder(null);
+  }
+
+  public void removeProducts(List<Product> products) {
+    products.forEach(this::removeProduct);
   }
 
 }
